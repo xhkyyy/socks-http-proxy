@@ -1,0 +1,5 @@
+{
+  "domain_file": "./domain.file",
+  "addr": "127.0.0.1:8888",
+  "socks5_addr": "127.0.0.1:1080"
+}
