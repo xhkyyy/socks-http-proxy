@@ -41,7 +41,10 @@ func InitRule(filePath string) {
 		panic(err)
 	}
 	for _, line := range strings.Split(string(b), "\n") {
-		rule[line] = true
+		line = strings.TrimSpace(line)
+		if len(line) > 0 {
+			rule[line] = true
+		}
 	}
 }
 
