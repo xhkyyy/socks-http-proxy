@@ -50,26 +50,24 @@ func InitRule(filePath string) {
 }
 
 func UrlMatcheHost(host string) bool {
-	/*
-		host = strings.TrimSuffix(host, ":443")
-		//host = strings.TrimSuffix(host, ":80")
-		host = strings.TrimPrefix(host, "www.")
-		i := SecondLastIndex(host, '.')
-		if i != -1 {
-			host = host[i+1:]
-		}
-		//log.Println("------------------------------------>" + host)
-	*/
+	host = strings.TrimSuffix(host, ":443")
 	_, find := rule[host]
 
 	if !find {
-
+		domainArray := getSubDomains(host)
+		if domainArray != nil && len(domainArray) > 0 {
+			for _, d := range domainArray {
+				if _, find = rule[d]; find {
+					return find
+				}
+			}
+		}
 	}
 	return find
 }
 
 func getSubDomains(host string) []string {
-	fmt.Println("-------->" + host)
+	fmt.Println("<--->" + host)
 	arr := strings.Split(host, ".")
 
 	arrLen := len(arr)
@@ -86,19 +84,4 @@ func getSubDomains(host string) []string {
 	}
 
 	return domains
-}
-
-func SecondLastIndex(s string, c byte) int {
-	count := 0
-	for i := len(s) - 1; i >= 0; i-- {
-		if s[i] == c {
-			count += 1
-			if count == 2 {
-				return i
-			} else {
-				continue
-			}
-		}
-	}
-	return -1
 }

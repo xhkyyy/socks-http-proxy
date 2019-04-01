@@ -2,12 +2,11 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	// "fmt"
 	"golang.org/x/net/proxy"
 	"log"
 	"net/http"
 	"strings"
-	"time"
 )
 
 const (
@@ -24,7 +23,7 @@ type ProxyServer struct {
 
 func (p *ProxyServer) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	done := make(chan bool)
-	t := time.Now()
+	// t := time.Now()
 	go func() {
 		if UrlMatcheHost(req.Host) {
 			Socks5Dispatcher(wr, req)
@@ -34,7 +33,7 @@ func (p *ProxyServer) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		done <- true
 	}()
 	<-done
-	fmt.Println(req.URL.String() + "------------->" + time.Since(t).String())
+	// fmt.Println(req.URL.String() + "------------->" + time.Since(t).String())
 }
 
 func initConf(addr *string) {
