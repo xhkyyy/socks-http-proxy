@@ -63,3 +63,53 @@ func BenchmarkUrlMatcheAny(b *testing.B) {
 		UrlMatcheHost("www.abc.com:443")
 	}
 }
+
+func TestGetSubDomains(t *testing.T) {
+	want := []string{"xx.com"}
+	if got := getSubDomains("www.xx.com"); !eqSlice(want, got) {
+		t.Errorf("getSubDomains(www.xx.com) = %q, want %q", got, want)
+	}
+
+	want = []string{"cd.123.xx.com", "123.xx.com", "xx.com"}
+
+	if got := getSubDomains("ab.cd.123.xx.com"); !eqSlice(want, got) {
+		t.Errorf("getSubDomains(ab.cd.123.xx.com) = %q, want %q", got, want)
+	}
+
+	want = nil
+
+	if got := getSubDomains("xx.com"); !eqSlice(want, got) {
+		t.Errorf("getSubDomains(xx.com) = %q, want %q", got, want)
+	}
+
+	want = nil
+
+	if got := getSubDomains(""); !eqSlice(want, got) {
+		t.Errorf("getSubDomains('') = %q, want %q", got, want)
+	}
+
+	want = nil
+	var param string
+	if got := getSubDomains(param); !eqSlice(want, got) {
+		t.Errorf("getSubDomains('') = %q, want %q", got, want)
+	}
+}
+
+func eqSlice(a, b []string) bool {
+
+	if (a == nil) != (b == nil) {
+		return false
+	}
+
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	return true
+}
