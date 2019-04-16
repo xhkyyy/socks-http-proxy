@@ -1,6 +1,6 @@
 # socks-http-proxy
 
-## A http proxy over SOCKS5.
+## HTTP request through SOCKS5 protocol
 
 You can add domain names to `domain.file` file , this means that both HTTP and HTTPS requests for these domain will go through the SOCKS5.
 

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -49,7 +48,7 @@ func InitRule(filePath string) {
 	}
 }
 
-func UrlMatcheHost(host string) bool {
+func UrlMatchDomain(host string) bool {
 	host = strings.TrimSuffix(host, ":443")
 	_, find := rule[host]
 
@@ -67,7 +66,6 @@ func UrlMatcheHost(host string) bool {
 }
 
 func getSubDomains(host string) []string {
-	fmt.Println("<--->" + host)
 	arr := strings.Split(host, ".")
 
 	arrLen := len(arr)

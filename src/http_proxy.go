@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
 	"fmt"
 	"io"
 	"log"
@@ -15,12 +14,12 @@ func ProxyHTTPS(rw http.ResponseWriter, req *http.Request) {
 	defer func() {
 		if proxyConn != nil {
 			log.Println("ProxyHTTPS() close proxyConn")
-			proxyConn.Close()
+			_ = proxyConn.Close()
 		}
 
 		if clientConn != nil {
 			log.Println("ProxyHTTPS() close clientConn")
-			clientConn.Close()
+			_ = clientConn.Close()
 		}
 	}()
 
@@ -49,10 +48,10 @@ func ProxyHTTPS(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	go func() {
-		io.Copy(clientConn, proxyConn)
+		_, _ = io.Copy(clientConn, proxyConn)
 	}()
 
-	io.Copy(proxyConn, clientConn)
+	_, _ = io.Copy(proxyConn, clientConn)
 }
 
 func ProxyHTTP(wr http.ResponseWriter, req *http.Request) {
@@ -67,7 +66,7 @@ func ProxyHTTP(wr http.ResponseWriter, req *http.Request) {
 
 		if resp != nil && resp.Body != nil {
 			log.Println("ProxyHTTP() close resp.Body")
-			resp.Body.Close()
+			_ = resp.Body.Close()
 		}
 	}()
 
@@ -91,7 +90,7 @@ func ProxyHTTP(wr http.ResponseWriter, req *http.Request) {
 	h := wr.Header()
 	CopyHeader(&h, &resp.Header)
 	wr.WriteHeader(resp.StatusCode)
-	io.Copy(wr, resp.Body)
+	_, _ = io.Copy(wr, resp.Body)
 }
 
 func newClient() *http.Client {
@@ -99,16 +98,8 @@ func newClient() *http.Client {
 	return httpClient
 }
 
-func newInsecureSSLClient() *http.Client {
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-	httpClient := &http.Client{Transport: tr}
-	return httpClient
-}
-
 func HttpDispatcher(rw http.ResponseWriter, req *http.Request) {
-	if req.URL.Port() == HTTPSPORT {
+	if req.URL.Port() == HttpsPort {
 		ProxyHTTPS(rw, req)
 	} else {
 		ProxyHTTP(rw, req)
