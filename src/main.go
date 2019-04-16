@@ -25,7 +25,7 @@ func (p *ProxyServer) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 	done := make(chan bool)
 	// t := time.Now()
 	go func() {
-		if UrlMatcheHost(req.Host) {
+		if UrlMatchDomain(req.Host) {
 			Socks5Dispatcher(wr, req)
 		} else {
 			HttpDispatcher(wr, req)

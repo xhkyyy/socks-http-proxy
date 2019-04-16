@@ -32,8 +32,8 @@ func TestUrlMatcheAny(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := UrlMatcheHost(tt.args.urlStr); got != tt.want {
-				t.Errorf("UrlMatcheHost() = %v, want %v", got, tt.want)
+			if got := UrlMatchDomain(tt.args.urlStr); got != tt.want {
+				t.Errorf("UrlMatchDomain() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -41,7 +41,7 @@ func TestUrlMatcheAny(t *testing.T) {
 
 func BenchmarkUrlMatcheAny(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		UrlMatcheHost("www.abc.com:443")
+		UrlMatchDomain("www.abc.com:443")
 	}
 }
 
