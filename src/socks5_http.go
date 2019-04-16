@@ -123,7 +123,7 @@ func newSocks5Client() *http.Client {
 }
 
 func Socks5Dispatcher(rw http.ResponseWriter, req *http.Request) {
-	if req.URL.Port() == HTTPSPORT {
+	if req.URL.Port() == HttpsPort {
 		Socks5ProxyHTTPS(rw, req)
 	} else {
 		Socks5ProxyHTTP(rw, req)

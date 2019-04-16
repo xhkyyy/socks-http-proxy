@@ -11,8 +11,7 @@ import (
 
 const (
 	socks5HandleCacheSize = 100
-	HTTPSPORT             = "443"
-	HTTPSPORT2            = "6443"
+	HttpsPort             = "443"
 )
 
 var ConfInfo *Conf

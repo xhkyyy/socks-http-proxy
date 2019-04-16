@@ -99,7 +99,7 @@ func newClient() *http.Client {
 }
 
 func HttpDispatcher(rw http.ResponseWriter, req *http.Request) {
-	if req.URL.Port() == HTTPSPORT {
+	if req.URL.Port() == HttpsPort {
 		ProxyHTTPS(rw, req)
 	} else {
 		ProxyHTTP(rw, req)
