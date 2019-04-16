@@ -27,12 +27,12 @@ func Socks5ProxyHTTPS(rw http.ResponseWriter, req *http.Request) {
 
 		if proxyConn != nil {
 			log.Println("Socks5ProxyHTTPS() close proxyConn")
-			proxyConn.Close()
+			_ = proxyConn.Close()
 		}
 
 		if clientConn != nil {
 			log.Println("Socks5ProxyHTTPS() close clientConn")
-			clientConn.Close()
+			_ = clientConn.Close()
 		}
 	}()
 	hij, ok := rw.(http.Hijacker)
@@ -62,10 +62,10 @@ func Socks5ProxyHTTPS(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	go func() {
-		io.Copy(clientConn, proxyConn)
+		_, _ = io.Copy(clientConn, proxyConn)
 	}()
 
-	io.Copy(proxyConn, clientConn)
+	_, _ = io.Copy(proxyConn, clientConn)
 }
 
 func Socks5ProxyHTTP(wr http.ResponseWriter, req *http.Request) {
@@ -78,7 +78,7 @@ func Socks5ProxyHTTP(wr http.ResponseWriter, req *http.Request) {
 
 		if resp != nil && resp.Body != nil {
 			log.Println("Socks5ProxyHTTP() close resp.Body")
-			resp.Body.Close()
+			_ = resp.Body.Close()
 		}
 	}()
 	clientHand := newSocks5Client()
@@ -100,7 +100,7 @@ func Socks5ProxyHTTP(wr http.ResponseWriter, req *http.Request) {
 	h := wr.Header()
 	CopyHeader(&h, &resp.Header)
 	wr.WriteHeader(resp.StatusCode)
-	io.Copy(wr, resp.Body)
+	_, _ = io.Copy(wr, resp.Body)
 }
 
 func newSocks5Client() *http.Client {
