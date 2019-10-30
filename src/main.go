@@ -20,14 +20,14 @@ var socks5HandleCache = make(chan proxy.Dialer, socks5HandleCacheSize)
 type ProxyServer struct {
 }
 
-func (p *ProxyServer) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
+func (p *ProxyServer) ServeHTTP(responseWriter http.ResponseWriter, req *http.Request) {
 	done := make(chan bool)
 	// t := time.Now()
 	go func() {
 		if UrlMatchDomain(req.Host) {
-			Socks5Dispatcher(wr, req)
+			Socks5Dispatcher(responseWriter, req)
 		} else {
-			HttpDispatcher(wr, req)
+			HttpDispatcher(responseWriter, req)
 		}
 		done <- true
 	}()

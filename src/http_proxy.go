@@ -6,9 +6,10 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"time"
 )
 
-func ProxyHTTPS(rw http.ResponseWriter, req *http.Request) {
+func ProxyHTTPS(responseWriter http.ResponseWriter, req *http.Request) {
 	var proxyConn, clientConn net.Conn
 	var err error
 	defer func() {
@@ -23,7 +24,7 @@ func ProxyHTTPS(rw http.ResponseWriter, req *http.Request) {
 		}
 	}()
 
-	hij, ok := rw.(http.Hijacker)
+	hij, ok := responseWriter.(http.Hijacker)
 	if !ok {
 		log.Println("ProxyHTTPS() error")
 		return
@@ -49,12 +50,14 @@ func ProxyHTTPS(rw http.ResponseWriter, req *http.Request) {
 
 	go func() {
 		_, _ = io.Copy(clientConn, proxyConn)
+		setDeadLine(proxyConn, clientConn)
 	}()
 
 	_, _ = io.Copy(proxyConn, clientConn)
+	setDeadLine(proxyConn, clientConn)
 }
 
-func ProxyHTTP(wr http.ResponseWriter, req *http.Request) {
+func ProxyHTTP(responseWriter http.ResponseWriter, req *http.Request) {
 	var resp *http.Response
 	var err error
 
@@ -87,10 +90,11 @@ func ProxyHTTP(wr http.ResponseWriter, req *http.Request) {
 	}
 
 	DelHopHeaders(&resp.Header)
-	h := wr.Header()
+	h := responseWriter.Header()
 	CopyHeader(&h, &resp.Header)
-	wr.WriteHeader(resp.StatusCode)
-	_, _ = io.Copy(wr, resp.Body)
+	responseWriter.WriteHeader(resp.StatusCode)
+
+	_, _ = io.Copy(responseWriter, resp.Body)
 }
 
 func newClient() *http.Client {
@@ -104,4 +108,9 @@ func HttpDispatcher(rw http.ResponseWriter, req *http.Request) {
 	} else {
 		ProxyHTTP(rw, req)
 	}
+}
+
+func setDeadLine(proxyConn net.Conn, clientConn net.Conn) {
+	_ = proxyConn.SetDeadline(time.Now())
+	_ = clientConn.SetDeadline(time.Now())
 }

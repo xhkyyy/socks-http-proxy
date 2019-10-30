@@ -24,6 +24,6 @@ func LoadConf(filePath string) *Conf {
 	}
 
 	var confInfo Conf
-	json.Unmarshal(b, &confInfo)
+	_ = json.Unmarshal(b, &confInfo)
 	return &confInfo
 }
